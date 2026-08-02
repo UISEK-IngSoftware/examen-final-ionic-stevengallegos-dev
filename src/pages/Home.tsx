@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   IonAvatar,
   IonBadge,
@@ -15,18 +15,18 @@ import {
   IonTitle,
   IonToolbar,
   useIonViewWillEnter,
-} from '@ionic/react';
-import { getCharacters } from '../services/FuturamaService';
-import { Character } from '../interfaces/Character';
-import './Home.css';
+} from "@ionic/react";
+import { getCharacters } from "../services/FuturamaService";
+import { Character } from "../interfaces/Character";
+import "./Home.css";
 
-
+const DEFAULT_AVATAR_URL =
+  "https://ionicframework.com/docs/img/demos/avatar.svg";
 
 const Home: React.FC = () => {
-
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   /**
    * OBTIENE LOS PERSONAJES DE FUTURAMA DESDE LA API
@@ -34,20 +34,22 @@ const Home: React.FC = () => {
   const loadCharacters = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError("");
 
       const response = await getCharacters();
       setCharacters(response.items ?? []);
     } catch (error) {
-      console.error('Error al obtener los personajes:', error);
-      setError('No se pudieron obtener los personajes. Por favor, inténtalo de nuevo más tarde.');
+      console.error("Error al obtener los personajes:", error);
+      setError(
+        "No se pudieron obtener los personajes. Por favor, inténtalo de nuevo más tarde.",
+      );
       setCharacters([]);
     } finally {
       setLoading(false);
     }
   };
   /**
-   * RECARGA LA INFORMACIÓN CUANDO EL USUARIO DESLIZA HACIA ABAJO 
+   * RECARGA LA INFORMACIÓN CUANDO EL USUARIO DESLIZA HACIA ABAJO
    */
 
   const refresh = async (event: CustomEvent) => {
@@ -55,18 +57,45 @@ const Home: React.FC = () => {
     event.detail.complete();
   };
   /**
- * Devuelve el color según el estado del personaje.
- */
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'ALIVE':
-      return 'success';
+   * DEVUELVE EL COLOR DEL ESTADO DEL PERSONAJE
+   */
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "ALIVE":
+        return "success";
 
-    case 'DEAD':
-      return 'danger';
+      case "DEAD":
+        return "danger";
 
-    default:
-      return 'warning';
+      default:
+        return "warning";
+    }
+  };
+
+  const getStatus = (status: string) => {
+    switch (status) {
+      case "ALIVE":
+        return "Vivo";
+
+      case "DEAD":
+        return "Fallecido";
+
+      default:
+        return "Desconocido";
+    }
+  };
+
+  /**
+   * DEVUELVE EL GENERO EN ESPAÑOL
+   */
+  const getGenderInSpanish = (gender: string) => {
+    switch (gender) {
+      case "MALE":
+        return "Masculino";
+      case "FEMALE":
+        return "Femenino";
+      default:
+        return "Otro";
     }
   };
 
@@ -86,16 +115,11 @@ const getStatusColor = (status: string) => {
         <IonRefresher slot="fixed" onIonRefresh={refresh}>
           <IonRefresherContent />
         </IonRefresher>
-        <IonLoading
-          isOpen={loading}
-          message="Cargando personajes..."
-        />
+        <IonLoading isOpen={loading} message="Cargando personajes..." />
         {error && (
           <div className="error-message">
             <IonText color="danger">
-              <p>
-                {error}
-              </p>
+              <p>{error}</p>
             </IonText>
           </div>
         )}
@@ -103,9 +127,7 @@ const getStatusColor = (status: string) => {
         {!loading && !error && characters.length === 0 && (
           <div className="status-message">
             <IonText color="medium">
-              <p>
-                No se encontraron personajes.
-              </p>
+              <p>No se encontraron personajes.</p>
             </IonText>
           </div>
         )}
@@ -115,22 +137,22 @@ const getStatusColor = (status: string) => {
             {characters.map((character) => (
               <IonItem key={character.id}>
                 <IonAvatar slot="start">
-                  <img src={character.image || 
-                  'https://ionicframework.com/docs/img/demos/avatar.svg'
-                  }
+                  <img
+                    src={character.image || DEFAULT_AVATAR_URL}
                     alt={character.name}
                     onError={(event) => {
-                      event.currentTarget.src = 'https://ionicframework.com/docs/img/demos/avatar.svg';
+                      event.currentTarget.src = DEFAULT_AVATAR_URL;
                     }}
                   />
                 </IonAvatar>
 
                 <IonLabel>
                   <h2>{character.name}</h2>
-                  <p>Género: {character.gender}</p>
-                  <p>Estado:{' '}
+                  <p>Género: {getGenderInSpanish(character.gender)}</p>
+                  <p>
+                    Estado:{" "}
                     <IonBadge color={getStatusColor(character.status)}>
-                      {character.status}
+                      {getStatus(character.status)}
                     </IonBadge>
                   </p>
                 </IonLabel>
