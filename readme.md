@@ -1,7 +1,7 @@
 # Examen Final - Aplicación Ionic Futurama
 
 ## Datos del estudiantes
-- Nombre: ______________________
+- Nombre: Steven Gallegos 
 
 ## 📋 Objetivo
 
